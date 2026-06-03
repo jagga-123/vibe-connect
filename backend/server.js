@@ -75,9 +75,11 @@ app.use((err, req, res, next) => {
 
 // Database Connection & Server Startup
 const PORT = process.env.PORT || 5000;
-const MONGO_URI =
-  process.env.MONGO_URI ||
-  'mongodb+srv://m69727336_db_user:Monster123@cluster0.bme8yde.mongodb.net/?appName=Cluster0';
+const MONGO_URI = process.env.MONGO_URI;
+
+if (!MONGO_URI) {
+  throw new Error('MONGO_URI is not configured. Set it in the environment.');
+}
 
 mongoose
   .connect(MONGO_URI)
