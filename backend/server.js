@@ -22,6 +22,19 @@ const normalizeOrigin = (value) => {
   }
 };
 
+const isTrustedHostedOrigin = (origin) => {
+  try {
+    const { hostname } = new URL(origin);
+    return (
+      hostname.endsWith('.vercel.app') ||
+      hostname.endsWith('.netlify.app') ||
+      hostname.endsWith('.github.io')
+    );
+  } catch {
+    return false;
+  }
+};
+
 const parseAllowedOrigins = () => {
   const rawOrigins = [
     process.env.CLIENT_URL,
@@ -42,7 +55,11 @@ app.use(
   cors({
     origin: (origin, callback) => {
       // Allow local development and any explicitly configured production origins.
-      if (!origin || allowedOrigins.includes(normalizeOrigin(origin))) {
+      if (
+        !origin ||
+        allowedOrigins.includes(normalizeOrigin(origin)) ||
+        isTrustedHostedOrigin(origin)
+      ) {
         return callback(null, true);
       }
       return callback(new Error('Not allowed by CORS'));
