@@ -9,6 +9,19 @@ const postRoutes = require('./routes/postRoutes');
 
 const app = express();
 
+const normalizeOrigin = (value) => {
+  if (!value) return null;
+
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  try {
+    return new URL(trimmed).origin;
+  } catch {
+    return trimmed.replace(/\/$/, '');
+  }
+};
+
 const parseAllowedOrigins = () => {
   const rawOrigins = [
     process.env.CLIENT_URL,
@@ -19,7 +32,7 @@ const parseAllowedOrigins = () => {
     .flatMap((value) => value.split(','));
 
   const defaults = ['http://localhost:5173', 'http://localhost:3000'];
-  return [...new Set([...rawOrigins, ...defaults].map((origin) => origin.trim()).filter(Boolean))];
+  return [...new Set([...rawOrigins, ...defaults].map(normalizeOrigin).filter(Boolean))];
 };
 
 const allowedOrigins = parseAllowedOrigins();
@@ -29,7 +42,7 @@ app.use(
   cors({
     origin: (origin, callback) => {
       // Allow local development and any explicitly configured production origins.
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.includes(normalizeOrigin(origin))) {
         return callback(null, true);
       }
       return callback(new Error('Not allowed by CORS'));
