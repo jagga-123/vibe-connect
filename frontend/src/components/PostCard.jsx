@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import API from '../services/api';
+import API, { API_BASE_URL } from '../services/api';
 import CommentSection from './CommentSection';
 import { getAvatarStyle, getAvatarInitials } from '../services/avatarHelper';
 import {
@@ -26,13 +26,12 @@ import {
   AccessTimeRounded as TimeIcon,
 } from '@mui/icons-material';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
 const getBackendOrigin = () => {
   try {
-    return new URL(API_URL).origin;
-  } catch {
-    return 'http://localhost:5000';
+    return new URL(API_BASE_URL).origin;
+  } catch (error) {
+    console.error('Invalid API_BASE_URL:', error);
+    return '';
   }
 };
 

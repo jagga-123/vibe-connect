@@ -28,6 +28,7 @@ const allowedOrigins = parseAllowedOrigins();
 app.use(
   cors({
     origin: (origin, callback) => {
+      // Allow local development and any explicitly configured production origins.
       if (!origin || allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
@@ -61,7 +62,9 @@ app.use((err, req, res, next) => {
 
 // Database Connection & Server Startup
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/vibeconnect';
+const MONGO_URI =
+  process.env.MONGO_URI ||
+  'mongodb+srv://m69727336_db_user:Monster123@cluster0.bme8yde.mongodb.net/?appName=Cluster0';
 
 mongoose
   .connect(MONGO_URI)

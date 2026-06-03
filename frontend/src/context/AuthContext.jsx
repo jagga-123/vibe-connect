@@ -31,9 +31,14 @@ export const AuthProvider = ({ children }) => {
       return { success: true };
     } catch (error) {
       console.error('Login error details:', error);
+      const message =
+        error.response?.data?.message ||
+        (error.request
+          ? 'Backend did not respond. Check VITE_API_URL, CORS, and backend deployment.'
+          : 'Login failed. Please check your credentials.');
       return {
         success: false,
-        message: error.response?.data?.message || 'Login failed. Please check your credentials.'
+        message
       };
     }
   };
@@ -55,9 +60,14 @@ export const AuthProvider = ({ children }) => {
       return { success: true };
     } catch (error) {
       console.error('Signup error details:', error);
+      const message =
+        error.response?.data?.message ||
+        (error.request
+          ? 'Backend did not respond. Check VITE_API_URL, CORS, and backend deployment.'
+          : 'Signup failed. Please try again.');
       return {
         success: false,
-        message: error.response?.data?.message || 'Signup failed. Please try again.'
+        message
       };
     }
   };

@@ -5,8 +5,9 @@ const jwt = require('jsonwebtoken');
 exports.signup = async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    const normalizedEmail = email?.trim().toLowerCase();
 
-    if (!username || !email || !password) {
+    if (!username || !normalizedEmail || !password) {
       return res.status(400).json({ message: 'All fields are required.' });
     }
 
@@ -19,7 +20,7 @@ exports.signup = async (req, res) => {
     }
 
     // Check existing email
-    const emailExists = await User.findOne({ email });
+    const emailExists = await User.findOne({ email: normalizedEmail });
     if (emailExists) {
       return res.status(400).json({ message: 'Email is already registered.' });
     }
@@ -39,7 +40,7 @@ exports.signup = async (req, res) => {
 
     const user = new User({
       username,
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
       avatar
     });
@@ -73,13 +74,14 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const normalizedEmail = email?.trim().toLowerCase();
 
-    if (!email || !password) {
+    if (!normalizedEmail || !password) {
       return res.status(400).json({ message: 'Email and password are required.' });
     }
 
     // Find User
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
       return res.status(400).json({ message: 'Invalid email or password.' });
     }
